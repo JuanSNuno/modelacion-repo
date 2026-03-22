@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Experiment {
+  id           String      @id @default(uuid())
+  name         String
+  type         String      // LUZ | SOMBRA
+  degree       Int
+  coefficients String      // JSON array of floats stored as string
+  r2           Float?
+  mse          Float?
+  createdAt    DateTime    @default(now())
+  dataPoints   DataPoint[]
+}
+
+model DataPoint {
+  id           String     @id @default(uuid())
+  x            Float
+  y            Float
+  experimentId String
+  experiment   Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+}
+
+model TrainingResult {
+  id           String   @id @default(uuid())
+  modelType    String   // LINEAR, POLYNOMIAL, DECISION_TREE, SVM, KNN
+  hyperparams  String   // JSON string
+  metrics      String   // JSON string { r2, mse, mae, accuracy }
+  coefficients String?  // JSON string
+  trainingData String   // JSON string snapshot
+  createdAt    DateTime @default(now())
+}
