@@ -3,8 +3,8 @@
 Bienvenido/a al repositorio de la materia **Modelación y Simulación de Sistemas**. Este espacio servirá como archivo central de trabajo, evidencias y desarrollos realizados a lo largo del curso.
 
 **Integrantes:**
-- Juan José Sánchez Nuno
-- Daniel Alejandro Rincón Valencia
+- Juan José Sánchez Nuno - JuanSNuno
+- Daniel Alejandro Rincón Valencia - DANIELRINCON28
 
 ---
 
@@ -20,8 +20,6 @@ La estructura principal del repositorio es la siguiente:
 
 - `PARCIAL1_SOL/` — Contiene los archivos y soportes del primer parcial (scripts, datos, generadores de PDF, gestor de DB, notebooks, etc.).
 - `series-temporales/` — Contiene datos y notebooks relacionados con series temporales y análisis de series (por ejemplo: `exchange_rates.csv` y notebooks de prueba).
-
-Dentro de `PARCIAL1_SOL/` puedes encontrar (ejemplo de archivos actuales):
 
 
 > Nota: La estructura puede ampliarse conforme avancemos en la materia.
