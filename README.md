@@ -3,8 +3,8 @@
 Bienvenido/a al repositorio de la materia **Modelación y Simulación de Sistemas**. Este espacio servirá como archivo central de trabajo, evidencias y desarrollos realizados a lo largo del curso.
 
 **Integrantes:**
-- Juan José Sánchez Nuno
-- Daniel Alejandro Rincón Valencia
+- Juan José Sánchez Nuno - JuanSNuno
+- Daniel Alejandro Rincón Valencia - DANIELRINCON28
 
 ---
 
