@@ -1,0 +1,68 @@
+# Byte-compiled / cached files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+venv*/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Pytest cache
+.pytest_cache/
+
+# IDE/editor directories
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Distribution / build
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Python packaging
+*.egg
+*.whl
+
+# TensorFlow / model checkpoints
+checkpoint
+*.h5
+*.ckpt
+saved_model/
+
+# Environment files
+.env
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# NOTE: .gitignore only affects untracked files. If files are already tracked
+# and you want to stop tracking them, run the following commands in the repo root:
+#
+#   git rm -r --cached .
+#   git add .
+#   git commit -m "Apply .gitignore to untrack ignored files"
+#
