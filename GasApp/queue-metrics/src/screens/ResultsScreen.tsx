@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Text, useTheme, Surface, Card, Button, TextInput } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Alert, TouchableOpacity, SafeAreaView, Platform, StatusBar, TextInput as RNTextInput } from 'react-native';
+import { Text, useTheme, IconButton } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
@@ -8,6 +8,7 @@ import { db } from '../database/db';
 import { calculatePn } from '../math/queueEngine';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Results'>;
@@ -20,10 +21,8 @@ export default function ResultsScreen({ navigation, route }: Props) {
 
   const [model, setModel] = useState<any>(null);
   const [study, setStudy] = useState<any>(null);
-  const [nInput, setNInput] = useState('0');
+  const [nInput, setNInput] = useState('3');
   const [pnResult, setPnResult] = useState<number | null>(null);
-  const [recommendation, setRecommendation] = useState('');
-  const [customNotes, setCustomNotes] = useState('');
 
   useEffect(() => {
     const studyData = db.getFirstSync('SELECT * FROM studies WHERE id = ?', [studyId]);
@@ -32,20 +31,26 @@ export default function ResultsScreen({ navigation, route }: Props) {
     setModel(modelData);
 
     if (modelData) {
-      if ((modelData as any).result_Rho > 0.85) {
-        setRecommendation('⚠️ La utilización (ρ) es muy alta (>85%). Se recomienda agregar un servidor o reducir los tiempos de atención para evitar cuellos de botella.');
-      } else if ((modelData as any).result_Rho < 0.40) {
-        setRecommendation('ℹ️ La utilización (ρ) es baja (<40%). El sistema podría tener servidores ociosos, considere optimizar turnos.');
-      } else {
-        setRecommendation('✅ El sistema opera en un estado de equilibrio adecuado.');
-      }
+      // Pre-calculate Pn for n=3 initially if wanted
+      const p = calculatePn(
+        (modelData as any).lambda_calculated, 
+        (modelData as any).mu_calculated, 
+        (modelData as any).servers_count, 
+        3, 
+        (modelData as any).result_P0
+      );
+      setPnResult(p);
     }
   }, [studyId]);
 
-  const handleCalculatePn = () => {
+  const handleCalculatePn = (text: string) => {
+    setNInput(text);
     if (!model) return;
-    const n = parseInt(nInput);
-    if (isNaN(n) || n < 0) return;
+    const n = parseInt(text);
+    if (isNaN(n) || n < 0) {
+      setPnResult(null);
+      return;
+    }
     const p = calculatePn(
       model.lambda_calculated, 
       model.mu_calculated, 
@@ -59,22 +64,31 @@ export default function ResultsScreen({ navigation, route }: Props) {
   const generatePDF = async () => {
     if (!model || !study) return;
     
+    let recommendation = '';
+    if (model.result_Rho > 0.85) {
+      recommendation = '⚠️ La utilización (ρ) es muy alta (>85%). Se recomienda agregar un servidor o reducir los tiempos de atención para evitar cuellos de botella.';
+    } else if (model.result_Rho < 0.40) {
+      recommendation = 'ℹ️ La utilización (ρ) es baja (<40%). El sistema podría tener servidores ociosos, considere optimizar turnos.';
+    } else {
+      recommendation = '✅ El sistema opera en un estado de equilibrio adecuado.';
+    }
+
     const html = `
       <html>
         <head>
           <style>
             body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #333; }
-            h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+            h1 { color: #000666; border-bottom: 2px solid #000666; padding-bottom: 10px; }
             .section { margin-bottom: 30px; }
-            .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+            .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e2e2; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-            th { background-color: #3498db; color: white; }
-            .recommendation { background: #e8f4f8; border-left: 5px solid #3498db; padding: 15px; margin-top: 20px;}
+            th { background-color: #000666; color: white; }
+            .recommendation { background: #e8f4f8; border-left: 5px solid #000666; padding: 15px; margin-top: 20px;}
           </style>
         </head>
         <body>
-          <h1>Informe de Simulación de Colas</h1>
+          <h1>Informe de Simulación de Colas - GasApp</h1>
           
           <div class="section">
             <h2>Contexto del Estudio</h2>
@@ -87,8 +101,8 @@ export default function ResultsScreen({ navigation, route }: Props) {
             <h2>Configuración del Modelo</h2>
             <p><strong>Tipo:</strong> ${model.type === 'MM1' ? 'M/M/1' : 'M/M/S'}</p>
             <p><strong>Servidores (S):</strong> ${model.servers_count}</p>
-            <p><strong>Tasa de Llegada (λ):</strong> ${model.lambda_calculated} clientes/tiempo</p>
-            <p><strong>Tasa de Servicio (μ):</strong> ${model.mu_calculated} clientes/tiempo</p>
+            <p><strong>Tasa de Llegada (λ):</strong> ${model.lambda_calculated} veh/h</p>
+            <p><strong>Tasa de Servicio (μ):</strong> ${model.mu_calculated} veh/h</p>
           </div>
 
           <div class="section">
@@ -98,16 +112,15 @@ export default function ResultsScreen({ navigation, route }: Props) {
               <tr><td>ρ (Utilización)</td><td>${(model.result_Rho * 100).toFixed(2)}%</td><td>Ocupación del sistema</td></tr>
               <tr><td>L</td><td>${model.result_L.toFixed(4)}</td><td>Clientes prom. en el sistema</td></tr>
               <tr><td>Lq</td><td>${model.result_Lq.toFixed(4)}</td><td>Clientes prom. en la cola</td></tr>
-              <tr><td>W</td><td>${model.result_W.toFixed(4)}</td><td>Tiempo prom. en el sistema</td></tr>
-              <tr><td>Wq</td><td>${model.result_Wq.toFixed(4)}</td><td>Tiempo prom. en la cola</td></tr>
+              <tr><td>W</td><td>${model.result_W.toFixed(4)}</td><td>Tiempo prom. en el sistema (h)</td></tr>
+              <tr><td>Wq</td><td>${model.result_Wq.toFixed(4)}</td><td>Tiempo prom. en la cola (h)</td></tr>
               <tr><td>P0</td><td>${(model.result_P0 * 100).toFixed(2)}%</td><td>Prob. de sistema vacío</td></tr>
             </table>
           </div>
 
           <div class="recommendation">
-            <h2>Análisis y Propuesta de Mejora</h2>
-            <p><strong>Sugerencia Automática:</strong><br/>${recommendation}</p>
-            <p><strong>Anotaciones Adicionales:</strong><br/>${customNotes || 'Sin anotaciones adicionales.'}</p>
+            <h2>Análisis</h2>
+            <p>${recommendation}</p>
           </div>
         </body>
       </html>
@@ -121,87 +134,306 @@ export default function ResultsScreen({ navigation, route }: Props) {
     }
   };
 
-  if (!model) return <View style={styles.container}><Text>Cargando...</Text></View>;
+  if (!model || !study) {
+    return (
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Cargando resultados...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const rhoPercent = model.result_Rho * 100;
+  const isHighUtil = rhoPercent > 85;
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Surface style={styles.surface} elevation={1}>
-        <Text variant="headlineSmall" style={{ marginBottom: 16 }}>{study?.title}</Text>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
+      {/* Top Header */}
+      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
+        <IconButton 
+          icon="arrow-left" 
+          iconColor={theme.colors.primary} 
+          onPress={() => navigation.goBack()}
+        />
+        <Text variant="titleLarge" style={{ fontWeight: '700', color: theme.colors.primary, letterSpacing: -0.5 }}>
+          GasApp
+        </Text>
+        <IconButton icon="dots-vertical" iconColor={theme.colors.primary} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 10 }}>Fórmulas Empleadas</Text>
-            {model.type === 'MM1' ? (
-              <Text variant="bodyLarge" style={styles.math}>L = λ / (μ - λ)</Text>
-            ) : (
-              <Text variant="bodyLarge" style={styles.math}>ρ = λ / (s · μ)</Text>
-            )}
-          </Card.Content>
-        </Card>
+        {/* Header Section */}
+        <View style={styles.titleSection}>
+          <Text variant="headlineSmall" style={{ fontWeight: '600', color: theme.colors.primary }}>
+            Resultados del Análisis
+          </Text>
+          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginTop: 4 }}>
+            Modelo de colas {model.type === 'MM1' ? 'M/M/1' : 'M/M/S'} - {study.title}
+          </Text>
+        </View>
 
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 10 }}>Métricas Estándar</Text>
-            <Text variant="bodyLarge">ρ: {(model.result_Rho * 100).toFixed(2)}%</Text>
-            <Text variant="bodyLarge">L: {model.result_L.toFixed(4)}</Text>
-            <Text variant="bodyLarge">Lq: {model.result_Lq.toFixed(4)}</Text>
-            <Text variant="bodyLarge">W: {model.result_W.toFixed(4)}</Text>
-            <Text variant="bodyLarge">Wq: {model.result_Wq.toFixed(4)}</Text>
-            <Text variant="bodyLarge">P0: {(model.result_P0 * 100).toFixed(2)}%</Text>
-          </Card.Content>
-        </Card>
-
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 10 }}>Probabilidad Pn</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TextInput
-                label="Valor de n"
-                value={nInput}
-                onChangeText={setNInput}
-                keyboardType="numeric"
-                mode="outlined"
-                style={{ flex: 1, marginRight: 10 }}
-              />
-              <Button mode="contained-tonal" onPress={handleCalculatePn}>Calcular</Button>
+        {/* KPI Grid */}
+        <View style={styles.kpiGrid}>
+          {/* Rho Card - Full Width */}
+          <View style={[styles.card, styles.cardFull, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outlineVariant, shadowColor: theme.colors.primary }]}>
+            <View style={styles.bgIcon}>
+              <MaterialIcons name="analytics" size={64} color={theme.colors.onSurfaceVariant} style={{ opacity: 0.1 }} />
             </View>
-            {pnResult !== null && (
-              <Text variant="bodyLarge" style={{ marginTop: 10 }}>
-                P({nInput}) = {(pnResult * 100).toFixed(4)}%
+            <View style={styles.rhoHeader}>
+              <MaterialIcons name="speed" size={18} color={theme.colors.onSurfaceVariant} />
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginLeft: 8 }}>
+                ρ (Utilización)
               </Text>
-            )}
-          </Card.Content>
-        </Card>
+            </View>
+            <View style={styles.rhoValues}>
+              <Text variant="displaySmall" style={{ fontWeight: '700', color: isHighUtil ? theme.colors.error : theme.colors.secondary, marginRight: 12 }}>
+                {model.result_Rho.toFixed(2)}
+              </Text>
+              <Text variant="titleMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 4, fontFamily: 'monospace' }}>
+                {rhoPercent.toFixed(0)}%
+              </Text>
+            </View>
+            <View style={[styles.progressBarBg, { backgroundColor: theme.colors.surfaceVariant }]}>
+              <View style={[styles.progressBarFill, { backgroundColor: isHighUtil ? theme.colors.error : theme.colors.secondary, width: `${Math.min(rhoPercent, 100)}%` as any }]} />
+            </View>
+          </View>
 
-        <Card style={[styles.card, { backgroundColor: theme.colors.tertiaryContainer }]}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ color: theme.colors.onTertiaryContainer }}>Análisis y Mejora</Text>
-            <Text style={{ marginTop: 8, color: theme.colors.onTertiaryContainer }}>{recommendation}</Text>
+          {/* KPI Small Cards */}
+          <View style={[styles.card, styles.cardSmall, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outlineVariant }]}>
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 4 }}>L (Vehículos en sistema)</Text>
+            <Text variant="headlineSmall" style={{ fontWeight: '700', color: theme.colors.primary }}>{model.result_L.toFixed(2)}</Text>
+          </View>
+
+          <View style={[styles.card, styles.cardSmall, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outlineVariant }]}>
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 4 }}>Lq (Vehículos en cola)</Text>
+            <Text variant="headlineSmall" style={{ fontWeight: '700', color: theme.colors.primary }}>{model.result_Lq.toFixed(2)}</Text>
+          </View>
+
+          <View style={[styles.card, styles.cardSmall, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outlineVariant }]}>
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 4 }}>W (Tiempo en sistema)</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+              <Text variant="headlineSmall" style={{ fontWeight: '700', color: theme.colors.primary, marginRight: 4 }}>{(model.result_W * 60).toFixed(1)}</Text>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant, fontFamily: 'monospace' }}>min</Text>
+            </View>
+          </View>
+
+          <View style={[styles.card, styles.cardSmall, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outlineVariant }]}>
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 4 }}>Wq (Tiempo en cola)</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+              <Text variant="headlineSmall" style={{ fontWeight: '700', color: theme.colors.primary, marginRight: 4 }}>{(model.result_Wq * 60).toFixed(1)}</Text>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant, fontFamily: 'monospace' }}>min</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Probability Calculator */}
+        <View style={[styles.probCard, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outlineVariant }]}>
+          <View style={[styles.probGlow, { backgroundColor: (theme.colors as any).primaryFixedDim }]} />
+          
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+            <MaterialIcons name="calculate" size={24} color={theme.colors.primary} />
+            <Text variant="titleMedium" style={{ fontWeight: '600', color: theme.colors.primary, marginLeft: 8 }}>
+              Calculadora de Probabilidad Pn
+            </Text>
+          </View>
+          
+          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 16 }}>
+            Calcule la probabilidad de que haya exactamente 'n' clientes en el sistema.
+          </Text>
+
+          <View style={[styles.probCalculator, { backgroundColor: (theme.colors as any).surfaceContainer }]}>
+            <View style={styles.probInputWrapper}>
+              <Text style={[styles.probLabel, { color: theme.colors.primary, backgroundColor: (theme.colors as any).surfaceContainer }]}>
+                Clientes (n)
+              </Text>
+              <RNTextInput
+                style={[styles.probInput, { backgroundColor: (theme.colors as any).surfaceContainerLowest, borderColor: theme.colors.outline, color: theme.colors.onSurface }]}
+                keyboardType="numeric"
+                value={nInput}
+                onChangeText={handleCalculatePn}
+              />
+            </View>
             
-            <TextInput
-              label="Notas Adicionales"
-              value={customNotes}
-              onChangeText={setCustomNotes}
-              mode="outlined"
-              multiline
-              numberOfLines={3}
-              style={{ marginTop: 12, backgroundColor: theme.colors.surface }}
-            />
-          </Card.Content>
-        </Card>
+            <View style={styles.probArrow}>
+              <MaterialIcons name="arrow-forward" size={24} color={theme.colors.outlineVariant} />
+            </View>
 
-        <Button mode="contained" style={styles.button} icon="file-pdf-box" onPress={generatePDF}>
-          Generar Informe PDF
-        </Button>
-      </Surface>
-    </ScrollView>
+            <View style={[styles.probResult, { backgroundColor: theme.colors.secondaryContainer, borderColor: (theme.colors as any).secondaryFixed }]}>
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSecondaryContainer }}>
+                Probabilidad (P{nInput || 'n'})
+              </Text>
+              <Text variant="headlineSmall" style={{ fontWeight: '700', color: (theme.colors as any).onSecondaryFixed, marginTop: 4, fontFamily: 'monospace' }}>
+                Pn = {pnResult !== null ? (pnResult * 100).toFixed(2) + '%' : '--'}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Bottom Actions */}
+        <View style={styles.actions}>
+          <TouchableOpacity 
+            style={[styles.actionBtn, { borderColor: theme.colors.outline }]}
+            onPress={generatePDF}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="picture-as-pdf" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+            <Text variant="titleMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>Exportar PDF</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.actionBtn, { borderColor: theme.colors.outline }]}
+            onPress={generatePDF} // Share is bundled inside generatePDF logic for now
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="share" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+            <Text variant="titleMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>Compartir</Text>
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  surface: { padding: 16, margin: 16, borderRadius: 12 },
-  card: { marginBottom: 16 },
-  button: { marginTop: 8, marginBottom: 20 },
-  math: { marginVertical: 8, fontFamily: 'monospace', fontSize: 18 }
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  header: {
+    height: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    zIndex: 50,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+  },
+  titleSection: {
+    marginTop: 24,
+    marginBottom: 24,
+  },
+  kpiGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  card: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  cardFull: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  cardSmall: {
+    width: '48%',
+  },
+  bgIcon: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  rhoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  rhoValues: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  progressBarBg: {
+    height: 6,
+    borderRadius: 3,
+    marginTop: 16,
+    width: '100%',
+  },
+  progressBarFill: {
+    height: 6,
+    borderRadius: 3,
+  },
+  probCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 24,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  probGlow: {
+    position: 'absolute',
+    right: -20,
+    top: -20,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    opacity: 0.2,
+  },
+  probCalculator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    padding: 16,
+  },
+  probInputWrapper: {
+    flex: 1,
+    position: 'relative',
+  },
+  probLabel: {
+    position: 'absolute',
+    top: -8,
+    left: 8,
+    fontSize: 10,
+    paddingHorizontal: 4,
+    zIndex: 10,
+  },
+  probInput: {
+    height: 48,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontFamily: 'monospace',
+  },
+  probArrow: {
+    paddingHorizontal: 16,
+  },
+  probResult: {
+    flex: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  actionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+  },
 });

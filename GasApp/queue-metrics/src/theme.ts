@@ -1,0 +1,46 @@
+import { MD3LightTheme } from 'react-native-paper';
+
+export const customColors = {
+  primary: '#000666',
+  onPrimary: '#ffffff',
+  primaryContainer: '#1a237e',
+  onPrimaryContainer: '#8690ee',
+  secondary: '#1b6d24',
+  onSecondary: '#ffffff',
+  secondaryContainer: '#a0f399',
+  onSecondaryContainer: '#217128',
+  tertiary: '#001944',
+  onTertiary: '#ffffff',
+  tertiaryContainer: '#002c6e',
+  onTertiaryContainer: '#6b95f3',
+  error: '#ba1a1a',
+  onError: '#ffffff',
+  errorContainer: '#ffdad6',
+  onErrorContainer: '#93000a',
+  background: '#f9f9f9',
+  onBackground: '#1a1c1c',
+  surface: '#f9f9f9',
+  onSurface: '#1a1c1c',
+  surfaceVariant: '#e2e2e2',
+  onSurfaceVariant: '#454652',
+  outline: '#767683',
+  outlineVariant: '#c6c5d4',
+  inverseSurface: '#2f3131',
+  inverseOnSurface: '#f1f1f1',
+  inversePrimary: '#bdc2ff',
+  surfaceContainerLowest: '#ffffff',
+  surfaceContainerLow: '#f3f3f3',
+  surfaceContainer: '#eeeeee',
+  surfaceContainerHigh: '#e8e8e8',
+  surfaceContainerHighest: '#e2e2e2',
+  primaryFixedDim: '#bdc2ff',
+};
+
+export const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    ...customColors,
+  },
+  roundness: 8,
+};
