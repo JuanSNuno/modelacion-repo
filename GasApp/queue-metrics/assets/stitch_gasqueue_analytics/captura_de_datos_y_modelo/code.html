@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GasApp - Data Input Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#767683",
+                      "on-secondary-container": "#217128",
+                      "surface": "#f9f9f9",
+                      "secondary-fixed": "#a3f69c",
+                      "tertiary-fixed": "#d9e2ff",
+                      "primary-fixed-dim": "#bdc2ff",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#a0f399",
+                      "on-primary-fixed-variant": "#343d96",
+                      "outline-variant": "#c6c5d4",
+                      "on-primary-fixed": "#000767",
+                      "tertiary-fixed-dim": "#b0c6ff",
+                      "inverse-primary": "#bdc2ff",
+                      "on-secondary-fixed": "#002204",
+                      "tertiary": "#001944",
+                      "surface-container-low": "#f3f3f3",
+                      "primary-fixed": "#e0e0ff",
+                      "surface-tint": "#4c56af",
+                      "error": "#ba1a1a",
+                      "surface-container-high": "#e8e8e8",
+                      "on-surface": "#1a1c1c",
+                      "primary": "#000666",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed-dim": "#88d982",
+                      "surface-variant": "#e2e2e2",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#8690ee",
+                      "tertiary-container": "#002c6e",
+                      "surface-container": "#eeeeee",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-background": "#1a1c1c",
+                      "on-tertiary-fixed-variant": "#00429c",
+                      "on-primary": "#ffffff",
+                      "surface-dim": "#dadada",
+                      "on-tertiary-fixed": "#001945",
+                      "surface-bright": "#f9f9f9",
+                      "on-secondary-fixed-variant": "#005312",
+                      "surface-container-highest": "#e2e2e2",
+                      "on-tertiary-container": "#6b95f3",
+                      "primary-container": "#1a237e",
+                      "inverse-surface": "#2f3131",
+                      "on-surface-variant": "#454652",
+                      "on-error-container": "#93000a",
+                      "secondary": "#1b6d24",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "background": "#f9f9f9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "card-padding": "16px",
+                      "base": "8px",
+                      "gutter": "12px",
+                      "margin-horizontal": "16px",
+                      "section-gap": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-numeric": [
+                              "JetBrains Mono"
+                      ],
+                      "kpi-value": [
+                              "Inter"
+                      ],
+                      "title-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-numeric": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "kpi-value": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "title-lg": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-lg min-h-screen flex flex-col md:pb-0 pb-[80px]">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-title-lg text-title-lg flex items-center justify-between px-margin-horizontal h-16 w-full z-50 sticky top-0 shadow-sm">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant dark:text-outline-variant">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-display-lg text-display-lg font-bold text-primary dark:text-primary-fixed tracking-tight">GasApp</h1>
+</div>
+<button class="hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant dark:text-outline-variant">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<main class="flex-1 px-margin-horizontal py-section-gap max-w-3xl mx-auto w-full flex flex-col gap-section-gap">
+<div class="flex flex-col gap-base">
+<h2 class="font-headline-md text-headline-md text-on-surface">Parámetros del Modelo</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Configure los parámetros de entrada para la simulación de colas en la estación de servicio.</p>
+</div>
+<!-- Analytical Input Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-card-padding flex flex-col gap-6 relative overflow-hidden">
+<!-- Subtle Depth Cue Glow -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Segmented Control for Model Selection -->
+<div class="flex flex-col gap-gutter">
+<label class="font-label-numeric text-label-numeric text-on-surface-variant">Modelo de Simulación</label>
+<div class="flex p-1 bg-surface-container-low rounded-lg border border-outline-variant/20">
+<button class="flex-1 py-2 text-center rounded-md bg-primary text-on-primary font-title-lg text-title-lg shadow-sm transition-all">
+                        M/M/1
+                    </button>
+<button class="flex-1 py-2 text-center rounded-md text-on-surface-variant font-title-lg text-title-lg hover:bg-surface-container-high transition-all">
+                        M/M/S
+                    </button>
+</div>
+</div>
+<hr class="border-outline-variant/30"/>
+<!-- Numeric Inputs Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-section-gap">
+<!-- Lambda Input -->
+<div class="flex flex-col gap-1 relative">
+<label class="absolute -top-2.5 left-3 bg-surface-container-lowest px-1 font-body-md text-body-md text-primary z-10" for="lambda_input">Tasa de Llegada (λ)</label>
+<div class="relative flex items-center">
+<input class="w-full bg-transparent border-2 border-primary rounded-lg px-4 py-3 font-label-numeric text-title-lg text-on-surface focus:outline-none focus:ring-0 focus:border-primary peer transition-colors" id="lambda_input" placeholder="0.00" type="number" value="45.5"/>
+<span class="absolute right-4 font-body-md text-body-md text-on-surface-variant pointer-events-none">veh/h</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 ml-1 text-xs">Vehículos llegando por hora.</p>
+</div>
+<!-- Mu Input -->
+<div class="flex flex-col gap-1 relative">
+<label class="absolute -top-2.5 left-3 bg-surface-container-lowest px-1 font-body-md text-body-md text-on-surface-variant peer-focus:text-primary z-10 transition-colors" for="mu_input">Tasa de Servicio (μ)</label>
+<div class="relative flex items-center">
+<input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 font-label-numeric text-title-lg text-on-surface focus:outline-none focus:ring-0 focus:border-primary focus:border-2 peer transition-all" id="mu_input" placeholder="0.00" type="number" value="60.0"/>
+<span class="absolute right-4 font-body-md text-body-md text-on-surface-variant pointer-events-none">veh/h</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 ml-1 text-xs">Vehículos atendidos por hora por servidor.</p>
+</div>
+<!-- S Input (Conditional visual state for M/M/S, currently visually distinct but part of the grid) -->
+<div class="flex flex-col gap-1 relative opacity-50 pointer-events-none col-span-1 md:col-span-2">
+<label class="absolute -top-2.5 left-3 bg-surface-container-lowest px-1 font-body-md text-body-md text-on-surface-variant z-10" for="s_input">Número de Servidores (S)</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-label-numeric text-title-lg text-on-surface-variant focus:outline-none peer transition-all" disabled="" id="s_input" placeholder="3" type="number" value="1"/>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 ml-1 text-xs">Deshabilitado para modelo M/M/1.</p>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-4 flex flex-col gap-4">
+<button class="w-full bg-primary text-on-primary font-title-lg text-title-lg py-4 rounded-full shadow-md hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="calculate">calculate</span>
+                Calcular Métricas
+            </button>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+<span class="font-body-md text-body-md text-xs">Asegúrese de que μ &gt; λ para evitar colas infinitas.</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Visible on Mobile) -->
+<nav class="bg-surface dark:bg-surface-container-lowest font-label-numeric text-label-numeric font-bold text-primary dark:text-primary-fixed flex items-center justify-around px-4 py-2 fixed bottom-0 left-0 w-full z-50 border-t border-outline-variant dark:border-outline shadow-lg md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="dashboard">dashboard</span>
+<span class="text-xs mt-1 group-hover:text-primary transition-colors">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="analytics">analytics</span>
+<span class="text-xs mt-1 group-hover:text-primary transition-colors">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="text-xs mt-1 group-hover:text-primary transition-colors">Settings</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GasApp - Resultados del Análisis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#767683",
+                        "on-secondary-container": "#217128",
+                        "surface": "#f9f9f9",
+                        "secondary-fixed": "#a3f69c",
+                        "tertiary-fixed": "#d9e2ff",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#a0f399",
+                        "on-primary-fixed-variant": "#343d96",
+                        "outline-variant": "#c6c5d4",
+                        "on-primary-fixed": "#000767",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "inverse-primary": "#bdc2ff",
+                        "on-secondary-fixed": "#002204",
+                        "tertiary": "#001944",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-fixed": "#e0e0ff",
+                        "surface-tint": "#4c56af",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e8e8",
+                        "on-surface": "#1a1c1c",
+                        "primary": "#000666",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#88d982",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#8690ee",
+                        "tertiary-container": "#002c6e",
+                        "surface-container": "#eeeeee",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#00429c",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "on-tertiary-fixed": "#001945",
+                        "surface-bright": "#f9f9f9",
+                        "on-secondary-fixed-variant": "#005312",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-container": "#6b95f3",
+                        "primary-container": "#1a237e",
+                        "inverse-surface": "#2f3131",
+                        "on-surface-variant": "#454652",
+                        "on-error-container": "#93000a",
+                        "secondary": "#1b6d24",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-padding": "16px",
+                        "base": "8px",
+                        "gutter": "12px",
+                        "margin-horizontal": "16px",
+                        "section-gap": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-numeric": ["JetBrains Mono"],
+                        "kpi-value": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-numeric": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "kpi-value": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Ambient glows for analytical aesthetic */
+        .ambient-glow-blue {
+            box-shadow: 0 4px 24px -4px rgba(0, 6, 102, 0.08);
+        }
+        .ambient-glow-green {
+            box-shadow: 0 4px 24px -4px rgba(27, 109, 36, 0.12);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg antialiased">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 bg-surface shadow-sm flex items-center justify-between px-margin-horizontal h-16 w-full z-50 sticky">
+<button class="text-primary hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-100 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="font-display-lg text-display-lg font-bold text-primary tracking-tight">
+            GasApp
+        </div>
+<button class="text-primary hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-100 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-margin-horizontal py-section-gap pb-24 md:max-w-4xl md:mx-auto w-full">
+<!-- Header -->
+<div class="mb-section-gap">
+<h1 class="font-headline-md text-headline-md text-primary">Resultados del Análisis</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Modelo de colas M/M/1 - Estación Principal</p>
+</div>
+<!-- KPI Grid (Bento Style) -->
+<div class="grid grid-cols-2 gap-gutter mb-section-gap">
+<!-- Utilización (Rho) - Highlighted -->
+<div class="col-span-2 bg-surface-container-lowest rounded-xl p-card-padding border border-outline-variant ambient-glow-blue relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[64px]" data-icon="analytics">analytics</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+                    ρ (Utilización)
+                </div>
+<div class="flex items-end gap-3">
+<div class="font-kpi-value text-kpi-value text-secondary">
+                        0.85
+                    </div>
+<div class="font-label-numeric text-label-numeric text-on-surface-variant mb-1">
+                        85%
+                    </div>
+</div>
+<!-- Progress Bar indicator -->
+<div class="w-full bg-surface-variant rounded-full h-1.5 mt-4">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<!-- L (Clientes en sistema) -->
+<div class="bg-surface-container-lowest rounded-xl p-card-padding border border-outline-variant shadow-sm hover:ambient-glow-blue transition-shadow duration-300">
+<div class="font-body-md text-body-md text-on-surface-variant mb-1">L (Clientes en sistema)</div>
+<div class="font-kpi-value text-kpi-value text-primary">5.67</div>
+</div>
+<!-- Lq (Clientes en cola) -->
+<div class="bg-surface-container-lowest rounded-xl p-card-padding border border-outline-variant shadow-sm hover:ambient-glow-blue transition-shadow duration-300">
+<div class="font-body-md text-body-md text-on-surface-variant mb-1">Lq (Clientes en cola)</div>
+<div class="font-kpi-value text-kpi-value text-primary">4.82</div>
+</div>
+<!-- W (Tiempo en sistema) -->
+<div class="bg-surface-container-lowest rounded-xl p-card-padding border border-outline-variant shadow-sm hover:ambient-glow-blue transition-shadow duration-300">
+<div class="font-body-md text-body-md text-on-surface-variant mb-1">W (Tiempo en sistema)</div>
+<div class="flex items-baseline gap-1">
+<div class="font-kpi-value text-kpi-value text-primary">12.5</div>
+<div class="font-label-numeric text-label-numeric text-on-surface-variant">min</div>
+</div>
+</div>
+<!-- Wq (Tiempo en cola) -->
+<div class="bg-surface-container-lowest rounded-xl p-card-padding border border-outline-variant shadow-sm hover:ambient-glow-blue transition-shadow duration-300">
+<div class="font-body-md text-body-md text-on-surface-variant mb-1">Wq (Tiempo en cola)</div>
+<div class="flex items-baseline gap-1">
+<div class="font-kpi-value text-kpi-value text-primary">10.6</div>
+<div class="font-label-numeric text-label-numeric text-on-surface-variant">min</div>
+</div>
+</div>
+</div>
+<!-- Interactive Section: Probability Calculator -->
+<div class="bg-surface-container-lowest rounded-xl p-card-padding border border-outline-variant shadow-sm mb-section-gap relative overflow-hidden group hover:border-primary-fixed-dim transition-colors">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-fixed-dim rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+<h2 class="font-title-lg text-title-lg text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined fill text-primary">calculate</span>
+                Calculadora de Probabilidad Pn
+            </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">
+                Calcule la probabilidad de que haya exactamente 'n' clientes en el sistema.
+            </p>
+<div class="flex flex-col md:flex-row gap-4 items-center bg-surface-container rounded-lg p-4">
+<div class="w-full md:w-1/3 relative">
+<label class="absolute -top-2 left-2 bg-surface-container px-1 font-body-md text-[12px] text-primary z-10" for="input-n">Clientes (n)</label>
+<input class="w-full bg-surface-container-lowest border border-outline text-on-surface rounded-lg px-4 py-3 font-label-numeric text-label-numeric focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="input-n" type="number" value="3"/>
+</div>
+<div class="hidden md:block text-outline-variant">
+<span class="material-symbols-outlined">arrow_forward</span>
+</div>
+<div class="w-full md:w-2/3 flex items-center justify-center bg-secondary-container rounded-lg p-4 border border-secondary-fixed">
+<div class="text-center">
+<div class="font-body-md text-body-md text-on-secondary-container mb-1">Probabilidad (P3)</div>
+<div class="font-kpi-value text-kpi-value text-on-secondary-fixed font-bold tracking-tight">Pn = 0.12</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Actions -->
+<div class="flex gap-4 mt-section-gap">
+<button class="flex-1 flex items-center justify-center gap-2 border border-outline text-primary font-title-lg text-[16px] font-semibold py-3 px-4 rounded-full hover:bg-surface-container-low active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                Exportar PDF
+            </button>
+<button class="flex-1 flex items-center justify-center gap-2 border border-outline text-primary font-title-lg text-[16px] font-semibold py-3 px-4 rounded-full hover:bg-surface-container-low active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">share</span>
+                Compartir
+            </button>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on Web) -->
+<nav class="docked full-width bottom-0 rounded-t-xl bg-surface border-t border-outline-variant shadow-lg fixed left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-all px-5 py-1 active:scale-90 duration-200">
+<span class="material-symbols-outlined text-[24px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-numeric text-[12px] mt-1">Dashboard</span>
+</button>
+<!-- Active Tab: History/Analytics relates closest to Results -->
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined fill text-[24px]" data-icon="analytics">analytics</span>
+<span class="font-label-numeric text-[12px] mt-1 font-bold">History</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-all px-5 py-1 active:scale-90 duration-200">
+<span class="material-symbols-outlined text-[24px]" data-icon="settings">settings</span>
+<span class="font-label-numeric text-[12px] mt-1">Settings</span>
+</button>
+</nav>
+</body></html>
