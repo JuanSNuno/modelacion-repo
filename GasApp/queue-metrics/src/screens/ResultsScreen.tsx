@@ -76,9 +76,9 @@ export default function ResultsScreen({ navigation, route }: Props) {
     }
 
     const conclusionsHtml = userConclusions.trim() ? `
-      <div class="section">
+      <div class="col section" style="flex: 2;">
         <h2>Conclusiones del Usuario</h2>
-        <div class="card" style="white-space: pre-wrap;">${userConclusions}</div>
+        <div class="card" style="white-space: pre-wrap; margin-bottom: 0;">${userConclusions}</div>
       </div>
     ` : '';
 
@@ -87,19 +87,19 @@ export default function ResultsScreen({ navigation, route }: Props) {
         <head>
           <style>
             @page { margin: 10mm; }
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 0; margin: 0; color: #333; font-size: 12px; }
-            h1 { color: #000666; border-bottom: 2px solid #000666; padding-bottom: 5px; margin-bottom: 10px; font-size: 18px; }
-            h2 { font-size: 14px; margin-top: 0; margin-bottom: 8px; color: #000666; }
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 0; margin: 0; color: #333; font-size: 11px; }
+            h1 { color: #000666; border-bottom: 2px solid #000666; padding-bottom: 5px; margin-bottom: 10px; font-size: 16px; }
+            h2 { font-size: 13px; margin-top: 0; margin-bottom: 8px; color: #000666; }
             p { margin: 4px 0; }
             .grid-container { display: flex; flex-direction: row; gap: 15px; margin-bottom: 15px; }
-            .col { flex: 1; }
-            .section { margin-bottom: 15px; page-break-inside: avoid; }
-            .card { background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e2e2e2; page-break-inside: avoid; height: 100%; box-sizing: border-box; }
-            table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 11px; page-break-inside: avoid; }
+            .col { flex: 1; display: flex; flex-direction: column; }
+            .section { page-break-inside: avoid; }
+            .card { background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e2e2e2; page-break-inside: avoid; height: 100%; box-sizing: border-box; margin-bottom: 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 0; font-size: 10px; page-break-inside: avoid; }
             tr { page-break-inside: avoid; page-break-after: auto; }
-            th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #ddd; }
+            th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #ddd; }
             th { background-color: #000666; color: white; font-weight: bold; }
-            .recommendation { background: #e8f4f8; border-left: 4px solid #000666; padding: 10px; margin-bottom: 15px; page-break-inside: avoid; }
+            .recommendation { background: #e8f4f8; border-left: 4px solid #000666; padding: 10px; margin-bottom: 0; page-break-inside: avoid; flex: 1; }
           </style>
         </head>
         <body>
@@ -122,25 +122,34 @@ export default function ResultsScreen({ navigation, route }: Props) {
             </div>
           </div>
 
-          <div class="section">
-            <h2>Resultados Matemáticos</h2>
-            <table>
-              <tr><th>Métrica</th><th>Valor</th><th>Interpretación</th></tr>
-              <tr><td>ρ (Utilización)</td><td>${(model.result_Rho * 100).toFixed(2)}%</td><td>Ocupación del sistema</td></tr>
-              <tr><td>L</td><td>${model.result_L.toFixed(4)}</td><td>Clientes prom. en el sistema</td></tr>
-              <tr><td>Lq</td><td>${model.result_Lq.toFixed(4)}</td><td>Clientes prom. en la cola</td></tr>
-              <tr><td>W</td><td>${model.result_W.toFixed(4)}</td><td>Tiempo prom. en el sistema (h)</td></tr>
-              <tr><td>Wq</td><td>${model.result_Wq.toFixed(4)}</td><td>Tiempo prom. en la cola (h)</td></tr>
-              <tr><td>P0</td><td>${(model.result_P0 * 100).toFixed(2)}%</td><td>Prob. de sistema vacío</td></tr>
-            </table>
+          <div class="grid-container" style="align-items: stretch;">
+            <div class="col section" style="flex: 1.2;">
+              <h2>Resultados Matemáticos</h2>
+              <table>
+                <tr><th>Métrica</th><th>Valor</th><th>Interpretación</th></tr>
+                <tr><td>ρ (Utilización)</td><td>${(model.result_Rho * 100).toFixed(2)}%</td><td>Ocupación del sistema</td></tr>
+                <tr><td>L</td><td>${model.result_L.toFixed(4)}</td><td>Clientes prom. en el sistema</td></tr>
+                <tr><td>Lq</td><td>${model.result_Lq.toFixed(4)}</td><td>Clientes prom. en la cola</td></tr>
+                <tr><td>W</td><td>${model.result_W.toFixed(4)}</td><td>Tiempo prom. en el sistema (h)</td></tr>
+                <tr><td>Wq</td><td>${model.result_Wq.toFixed(4)}</td><td>Tiempo prom. en la cola (h)</td></tr>
+                <tr><td>P0</td><td>${(model.result_P0 * 100).toFixed(2)}%</td><td>Prob. de sistema vacío</td></tr>
+              </table>
+            </div>
+
+            <div class="col section" style="flex: 1;">
+              <h2>Análisis Automático</h2>
+              <div class="recommendation">
+                <p>${recommendation}</p>
+              </div>
+            </div>
           </div>
 
-          <div class="recommendation">
-            <h2>Análisis Automático</h2>
-            <p>${recommendation}</p>
+          ${userConclusions.trim() ? `
+          <div class="grid-container">
+             ${conclusionsHtml}
           </div>
+          ` : ''}
           
-          ${conclusionsHtml}
         </body>
       </html>
     `;
