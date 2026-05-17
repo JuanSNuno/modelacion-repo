@@ -5,6 +5,7 @@ Bienvenido/a al repositorio de la materia **Modelación y Simulación de Sistema
 **Integrantes:**
 - Juan José Sánchez Nuno - JuanSNuno
 - Daniel Alejandro Rincón Valencia - DANIELRINCON28
+- Rey Brandon Toro Jimenez - ReyBrandonToro
 
 ---
 
