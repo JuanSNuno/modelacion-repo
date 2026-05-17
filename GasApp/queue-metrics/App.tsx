@@ -7,6 +7,7 @@ import DashboardScreen from './src/screens/DashboardScreen';
 import StudySetupScreen from './src/screens/StudySetupScreen';
 import DataInputScreen from './src/screens/DataInputScreen';
 import ResultsScreen from './src/screens/ResultsScreen';
+import FormulasScreen from './src/screens/FormulasScreen';
 import { initDb } from './src/database/db';
 import { theme } from './src/theme';
 
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   StudySetup: undefined;
   DataInput: { studyId: string };
   Results: { studyId: string };
+  Formulas: { studyId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,6 +39,7 @@ export default function App() {
           <Stack.Screen name="StudySetup" component={StudySetupScreen} />
           <Stack.Screen name="DataInput" component={DataInputScreen} />
           <Stack.Screen name="Results" component={ResultsScreen} />
+          <Stack.Screen name="Formulas" component={FormulasScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

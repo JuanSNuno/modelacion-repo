@@ -104,7 +104,6 @@ export default function DashboardScreen({ navigation }: Props) {
             GasApp
           </Text>
         </View>
-        <IconButton icon="dots-vertical" iconColor={theme.colors.onSurfaceVariant} />
       </View>
 
       {/* Main Content */}

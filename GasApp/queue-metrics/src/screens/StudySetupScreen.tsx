@@ -39,7 +39,6 @@ export default function StudySetupScreen({ navigation }: Props) {
         <Text variant="titleLarge" style={{ fontWeight: '700', color: theme.colors.primary, letterSpacing: -0.5 }}>
           GasApp
         </Text>
-        <IconButton icon="dots-vertical" iconColor={theme.colors.onSurfaceVariant} />
       </View>
 
       <View style={styles.content}>

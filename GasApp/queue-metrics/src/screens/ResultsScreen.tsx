@@ -8,6 +8,7 @@ import { db } from '../database/db';
 import { calculatePn } from '../math/queueEngine';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system/legacy';
 import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
@@ -23,6 +24,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
   const [study, setStudy] = useState<any>(null);
   const [nInput, setNInput] = useState('3');
   const [pnResult, setPnResult] = useState<number | null>(null);
+  const [userConclusions, setUserConclusions] = useState('');
 
   useEffect(() => {
     const studyData = db.getFirstSync('SELECT * FROM studies WHERE id = ?', [studyId]);
@@ -73,18 +75,27 @@ export default function ResultsScreen({ navigation, route }: Props) {
       recommendation = '✅ El sistema opera en un estado de equilibrio adecuado.';
     }
 
+    const conclusionsHtml = userConclusions.trim() ? `
+      <div class="section">
+        <h2>Conclusiones del Usuario</h2>
+        <div class="card" style="white-space: pre-wrap;">${userConclusions}</div>
+      </div>
+    ` : '';
+
     const html = `
       <html>
         <head>
           <style>
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #333; }
+            @page { margin: 20mm; }
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 0; margin: 0; color: #333; }
             h1 { color: #000666; border-bottom: 2px solid #000666; padding-bottom: 10px; }
-            .section { margin-bottom: 30px; }
-            .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e2e2; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            .section { margin-bottom: 30px; page-break-inside: avoid; }
+            .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e2e2; page-break-inside: avoid; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; page-break-inside: avoid; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
             th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
             th { background-color: #000666; color: white; }
-            .recommendation { background: #e8f4f8; border-left: 5px solid #000666; padding: 15px; margin-top: 20px;}
+            .recommendation { background: #e8f4f8; border-left: 5px solid #000666; padding: 15px; margin-top: 20px; page-break-inside: avoid; }
           </style>
         </head>
         <body>
@@ -119,18 +130,31 @@ export default function ResultsScreen({ navigation, route }: Props) {
           </div>
 
           <div class="recommendation">
-            <h2>Análisis</h2>
+            <h2>Análisis Automático</h2>
             <p>${recommendation}</p>
           </div>
+          
+          ${conclusionsHtml}
         </body>
       </html>
     `;
 
     try {
       const { uri } = await Print.printToFileAsync({ html });
-      await Sharing.shareAsync(uri);
-    } catch (error) {
-      Alert.alert('Error', 'No se pudo generar el PDF');
+      
+      // Sanitizar el título para usarlo como nombre de archivo
+      const safeTitle = study.title ? study.title.replace(/[^a-zA-Z0-9_\-]/g, '_') : 'Resultados';
+      const newUri = `${FileSystem.documentDirectory}${safeTitle}.pdf`;
+      
+      await FileSystem.moveAsync({
+        from: uri,
+        to: newUri,
+      });
+      
+      await Sharing.shareAsync(newUri);
+    } catch (error: any) {
+      console.error(error);
+      Alert.alert('Error', `No se pudo generar el PDF: ${error.message || error}`);
     }
   };
 
@@ -157,7 +181,6 @@ export default function ResultsScreen({ navigation, route }: Props) {
         <Text variant="titleLarge" style={{ fontWeight: '700', color: theme.colors.primary, letterSpacing: -0.5 }}>
           GasApp
         </Text>
-        <IconButton icon="dots-vertical" iconColor={theme.colors.primary} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -269,25 +292,48 @@ export default function ResultsScreen({ navigation, route }: Props) {
           </View>
         </View>
 
+        {/* User Conclusions */}
+        <View style={styles.conclusionsContainer}>
+          <Text variant="titleMedium" style={{ fontWeight: '600', color: theme.colors.primary, marginBottom: 8 }}>
+            Mis Conclusiones
+          </Text>
+          <RNTextInput
+            style={[styles.conclusionsInput, { 
+              backgroundColor: (theme.colors as any).surfaceContainerLowest, 
+              borderColor: theme.colors.outline, 
+              color: theme.colors.onSurface 
+            }]}
+            multiline
+            numberOfLines={4}
+            placeholder="Escribe tus conclusiones aquí para incluirlas en el PDF..."
+            placeholderTextColor={theme.colors.onSurfaceVariant}
+            value={userConclusions}
+            onChangeText={setUserConclusions}
+            textAlignVertical="top"
+          />
+        </View>
+
         {/* Bottom Actions */}
-        <View style={styles.actions}>
+        <View style={styles.actionsContainer}>
           <TouchableOpacity 
-            style={[styles.actionBtn, { borderColor: theme.colors.outline }]}
-            onPress={generatePDF}
+            style={[styles.actionBtn, { borderColor: theme.colors.outline, marginBottom: 16 }]}
+            onPress={() => navigation.navigate('Formulas', { studyId })}
             activeOpacity={0.7}
           >
-            <MaterialIcons name="picture-as-pdf" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
-            <Text variant="titleMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>Exportar PDF</Text>
+            <MaterialIcons name="functions" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+            <Text variant="titleMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>Ver Fórmulas</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.actionBtn, { borderColor: theme.colors.outline }]}
-            onPress={generatePDF} // Share is bundled inside generatePDF logic for now
-            activeOpacity={0.7}
-          >
-            <MaterialIcons name="share" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
-            <Text variant="titleMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>Compartir</Text>
-          </TouchableOpacity>
+          <View style={styles.actions}>
+            <TouchableOpacity 
+              style={[styles.actionBtn, { borderColor: theme.colors.outline }]}
+              onPress={generatePDF}
+              activeOpacity={0.7}
+            >
+              <MaterialIcons name="picture-as-pdf" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+              <Text variant="titleMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>Exportar PDF</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
       </ScrollView>
@@ -296,6 +342,9 @@ export default function ResultsScreen({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
+  actionsContainer: {
+    flexDirection: 'column',
+  },
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
@@ -422,6 +471,16 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
+  },
+  conclusionsContainer: {
+    marginBottom: 24,
+  },
+  conclusionsInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    fontSize: 16,
+    minHeight: 120,
   },
   actions: {
     flexDirection: 'row',
