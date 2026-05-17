@@ -86,34 +86,40 @@ export default function ResultsScreen({ navigation, route }: Props) {
       <html>
         <head>
           <style>
-            @page { margin: 20mm; }
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 0; margin: 0; color: #333; }
-            h1 { color: #000666; border-bottom: 2px solid #000666; padding-bottom: 10px; }
-            .section { margin-bottom: 30px; page-break-inside: avoid; }
-            .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e2e2; page-break-inside: avoid; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; page-break-inside: avoid; }
+            @page { margin: 10mm; }
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 0; margin: 0; color: #333; font-size: 12px; }
+            h1 { color: #000666; border-bottom: 2px solid #000666; padding-bottom: 5px; margin-bottom: 10px; font-size: 18px; }
+            h2 { font-size: 14px; margin-top: 0; margin-bottom: 8px; color: #000666; }
+            p { margin: 4px 0; }
+            .grid-container { display: flex; flex-direction: row; gap: 15px; margin-bottom: 15px; }
+            .col { flex: 1; }
+            .section { margin-bottom: 15px; page-break-inside: avoid; }
+            .card { background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e2e2e2; page-break-inside: avoid; height: 100%; box-sizing: border-box; }
+            table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 11px; page-break-inside: avoid; }
             tr { page-break-inside: avoid; page-break-after: auto; }
-            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-            th { background-color: #000666; color: white; }
-            .recommendation { background: #e8f4f8; border-left: 5px solid #000666; padding: 15px; margin-top: 20px; page-break-inside: avoid; }
+            th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background-color: #000666; color: white; font-weight: bold; }
+            .recommendation { background: #e8f4f8; border-left: 4px solid #000666; padding: 10px; margin-bottom: 15px; page-break-inside: avoid; }
           </style>
         </head>
         <body>
           <h1>Informe de Simulación de Colas - GasApp</h1>
           
-          <div class="section">
-            <h2>Contexto del Estudio</h2>
-            <p><strong>Título:</strong> ${study.title}</p>
-            <p><strong>Descripción:</strong> ${study.context_description || 'N/A'}</p>
-            <p><strong>Fecha:</strong> ${new Date(study.created_at).toLocaleString()}</p>
-          </div>
+          <div class="grid-container">
+            <div class="col card">
+              <h2>Contexto del Estudio</h2>
+              <p><strong>Título:</strong> ${study.title}</p>
+              <p><strong>Descripción:</strong> ${study.context_description || 'N/A'}</p>
+              <p><strong>Fecha:</strong> ${new Date(study.created_at).toLocaleString()}</p>
+            </div>
 
-          <div class="card">
-            <h2>Configuración del Modelo</h2>
-            <p><strong>Tipo:</strong> ${model.type === 'MM1' ? 'M/M/1' : 'M/M/S'}</p>
-            <p><strong>Servidores (S):</strong> ${model.servers_count}</p>
-            <p><strong>Tasa de Llegada (λ):</strong> ${model.lambda_calculated} veh/h</p>
-            <p><strong>Tasa de Servicio (μ):</strong> ${model.mu_calculated} veh/h</p>
+            <div class="col card">
+              <h2>Configuración del Modelo</h2>
+              <p><strong>Tipo:</strong> ${model.type === 'MM1' ? 'M/M/1' : 'M/M/S'}</p>
+              <p><strong>Servidores (S):</strong> ${model.servers_count}</p>
+              <p><strong>Tasa de Llegada (λ):</strong> ${model.lambda_calculated} veh/h</p>
+              <p><strong>Tasa de Servicio (μ):</strong> ${model.mu_calculated} veh/h</p>
+            </div>
           </div>
 
           <div class="section">
